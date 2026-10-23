@@ -1,7 +1,7 @@
 import { GeoJSON } from "geojson";
 import {
   LatLngBoundsLiteral,
-  PathOptions as LeafletPathOptions,
+  GeoJSONOptions as LeafletGeoJSONOptions,
 } from "leaflet";
 
 export type Id = string;
@@ -17,8 +17,6 @@ export type Callback = () => void;
 export type ClickCallback = (id: string) => void;
 export type Nullable<T> = T | null | undefined;
 
-export type RegisterElementOptions = {
-  pathOptions?: LeafletPathOptions;
-  pmIgnore?: boolean;
+export type RegisterElementOptions = LeafletGeoJSONOptions & {
   active?: boolean;
 };

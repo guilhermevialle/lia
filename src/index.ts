@@ -30,144 +30,53 @@ export class LiaProvider {
   }
 
   public register(
-    element: LiaElement,
-    { pmIgnore, pathOptions }: RegisterElementOptions = {},
+    elements: LiaElement[],
+    { active = false, pmIgnore, pathOptions }: RegisterElementOptions = {},
   ): void {
-    const wasActive = this.isActive(element.id);
+    for (const e of elements) {
+      const wasActive = this.isActive(e.id);
 
-    if (this.elements.has(element.id)) {
-      this.removeElement(element.id);
-    }
+      if (this.elements.has(e.id)) {
+        this.removeElement(e.id);
+      }
 
-    this.elements.set(element.id, element);
+      this.elements.set(e.id, e);
 
-    const instance = new LeafletGeoJSON(element.geojson, {
-      style: pathOptions,
-      pmIgnore,
-    });
+      const instance = new LeafletGeoJSON(e.geojson, {
+        style: pathOptions,
+        pmIgnore,
+      });
 
-    instance.on("click", () => this.notifyClick(element.id));
+      instance.on("click", () => this.notifyClick(e.id));
 
-    this.instances.set(element.id, instance);
-    this.bboxes.set(element.id, element.bbox);
+      this.instances.set(e.id, instance);
+      this.bboxes.set(e.id, e.bbox);
 
-    if (wasActive) {
-      this.activeIds.add(element.id);
+      if (wasActive || active) {
+        this.activeIds.add(e.id);
 
-      if (this.target) {
-        instance.addTo(this.target);
+        if (this.target) {
+          instance.addTo(this.target);
+        }
       }
     }
 
     this.notify();
   }
 
-  public addElement(
-    element: LiaElement,
-    options: RegisterElementOptions = {},
-  ): void {
-    this.register(element, options);
+  public removeElement(id: Id): void {
+    const instance = this.instances.get(id);
 
-    const instance = this.instances.get(element.id);
-
-    this.activeIds.add(element.id);
-
-    if (instance && this.target && !this.target.hasLayer(instance)) {
-      instance.addTo(this.target);
+    if (instance && this.target) {
+      this.target.removeLayer(instance);
     }
+
+    this.instances.delete(id);
+    this.elements.delete(id);
+    this.bboxes.delete(id);
+    this.activeIds.delete(id);
 
     this.notify();
-  }
-
-  public fitBbox(id: Id, options?: LeafletFitBoundsOptions): void {
-    const bbox = this.bboxes.get(id);
-
-    if (bbox && this.target) {
-      this.target.fitBounds(bbox, options);
-    }
-  }
-
-  public getElements(): Map<Id, LiaElement> {
-    return this.elements;
-  }
-
-  public isActive(id: Id): boolean {
-    return this.activeIds.has(id);
-  }
-
-  public isGroupActive(groupId: Id): boolean {
-    let hasElement = false;
-
-    for (const e of this.elements.values()) {
-      if (e.groupId !== groupId) {
-        continue;
-      }
-
-      hasElement = true;
-
-      if (!this.isActive(e.id)) {
-        return false;
-      }
-    }
-
-    return hasElement;
-  }
-
-  public isGroupIndeterminate(groupId: Id): boolean {
-    let activeCount = 0;
-    let totalCount = 0;
-
-    for (const e of this.elements.values()) {
-      if (e.groupId !== groupId) {
-        continue;
-      }
-
-      totalCount++;
-
-      if (this.isActive(e.id)) {
-        activeCount++;
-      }
-    }
-
-    return activeCount > 0 && activeCount < totalCount;
-  }
-
-  public hasGroup(groupId: Id): boolean {
-    for (const e of this.elements.values()) {
-      if (e.groupId === groupId) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  public has(id: Id): boolean {
-    return this.elements.has(id);
-  }
-
-  public notify(): void {
-    this.callbacks.forEach((cb) => cb());
-  }
-
-  public notifyClick(id: Id): void {
-    this.clickCallbacks.forEach((cb) => cb(id));
-  }
-
-  public subscribe(cb: Callback): () => void {
-    this.callbacks.add(cb);
-
-    return () => {
-      this.callbacks.delete(cb);
-    };
-  }
-
-  public onElementClick(cb: ClickCallback): () => void {
-    this.clickCallbacks.add(cb);
-
-    return () => {
-      this.clickCallbacks.delete(cb);
-    };
   }
 
   public setTarget(other: Nullable<LeafletMap>): void {
@@ -181,6 +90,38 @@ export class LiaProvider {
           instance.addTo(other);
         }
       });
+    }
+
+    this.notify();
+  }
+
+  public activate(id: Id): void {
+    const instance = this.instances.get(id);
+
+    if (!instance) {
+      return;
+    }
+
+    this.activeIds.add(id);
+
+    if (this.target && !this.target.hasLayer(instance)) {
+      instance.addTo(this.target);
+    }
+
+    this.notify();
+  }
+
+  public deactivate(id: Id): void {
+    const instance = this.instances.get(id);
+
+    if (!instance) {
+      return;
+    }
+
+    this.activeIds.delete(id);
+
+    if (this.target && this.target.hasLayer(instance)) {
+      this.target.removeLayer(instance);
     }
 
     this.notify();
@@ -242,18 +183,94 @@ export class LiaProvider {
     this.notify();
   }
 
-  public removeElement(id: Id): void {
-    const instance = this.instances.get(id);
+  public fitBbox(id: Id, options?: LeafletFitBoundsOptions): void {
+    const bbox = this.bboxes.get(id);
 
-    if (instance && this.target) {
-      this.target.removeLayer(instance);
+    if (bbox && this.target) {
+      this.target.fitBounds(bbox, options);
+    }
+  }
+
+  public getElements(): Map<Id, LiaElement> {
+    return this.elements;
+  }
+
+  public has(id: Id): boolean {
+    return this.elements.has(id);
+  }
+
+  public hasGroup(groupId: Id): boolean {
+    for (const e of this.elements.values()) {
+      if (e.groupId === groupId) {
+        return true;
+      }
     }
 
-    this.instances.delete(id);
-    this.elements.delete(id);
-    this.bboxes.delete(id);
-    this.activeIds.delete(id);
+    return false;
+  }
 
-    this.notify();
+  public isActive(id: Id): boolean {
+    return this.activeIds.has(id);
+  }
+
+  public isGroupActive(groupId: Id): boolean {
+    let hasElement = false;
+
+    for (const e of this.elements.values()) {
+      if (e.groupId !== groupId) {
+        continue;
+      }
+
+      hasElement = true;
+
+      if (!this.isActive(e.id)) {
+        return false;
+      }
+    }
+
+    return hasElement;
+  }
+
+  public isGroupIndeterminate(groupId: Id): boolean {
+    let activeCount = 0;
+    let totalCount = 0;
+
+    for (const e of this.elements.values()) {
+      if (e.groupId !== groupId) {
+        continue;
+      }
+
+      totalCount++;
+
+      if (this.isActive(e.id)) {
+        activeCount++;
+      }
+    }
+
+    return activeCount > 0 && activeCount < totalCount;
+  }
+
+  public subscribe(cb: Callback): () => void {
+    this.callbacks.add(cb);
+
+    return () => {
+      this.callbacks.delete(cb);
+    };
+  }
+
+  public onElementClick(cb: ClickCallback): () => void {
+    this.clickCallbacks.add(cb);
+
+    return () => {
+      this.clickCallbacks.delete(cb);
+    };
+  }
+
+  public notify(): void {
+    this.callbacks.forEach((cb) => cb());
+  }
+
+  public notifyClick(id: Id): void {
+    this.clickCallbacks.forEach((cb) => cb(id));
   }
 }

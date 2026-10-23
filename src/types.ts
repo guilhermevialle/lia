@@ -20,4 +20,5 @@ export type Nullable<T> = T | null | undefined;
 export type RegisterElementOptions = {
   pathOptions?: LeafletPathOptions;
   pmIgnore?: boolean;
+  active?: boolean;
 };

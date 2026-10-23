@@ -1,7 +1,7 @@
 {
-  "name": "lia",
+  "name": "@vialle/lia",
   "version": "1.0.0",
-  "description": "",
+  "description": "Reusable library for dynamic Leaflet layer management with React",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

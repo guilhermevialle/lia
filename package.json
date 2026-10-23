@@ -16,6 +16,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.20.4",
     "geojson": "^0.5.0",
     "leaflet": "^1.9.4"
   }

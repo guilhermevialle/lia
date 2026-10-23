@@ -1,19 +1,23 @@
 import { GeoJSON } from "geojson";
-import { LatLngBoundsLiteral } from "leaflet";
+import {
+  LatLngBoundsLiteral,
+  PathOptions as LeafletPathOptions,
+} from "leaflet";
 
-export type ElementId = string;
+export type Id = string;
 
 export type LiaElement = {
-  id: ElementId;
-  groupId: string;
+  id: Id;
+  groupId: Id;
   geojson: GeoJSON;
-  bounds: LatLngBoundsLiteral;
+  bbox: LatLngBoundsLiteral;
 };
 
-export type Listener = () => void;
-export type ClickListener = (id: string) => void;
+export type Callback = () => void;
+export type ClickCallback = (id: string) => void;
 export type Nullable<T> = T | null | undefined;
 
 export type RegisterElementOptions = {
+  pathOptions?: LeafletPathOptions;
   pmIgnore?: boolean;
 };

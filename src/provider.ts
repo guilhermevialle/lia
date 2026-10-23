@@ -29,15 +29,15 @@ export class LiaProvider {
     this.map = map;
   }
 
-  public register(
+  public registerElements(
     elements: LiaElement[],
     { active = false, ...options }: RegisterElementOptions = {},
   ): void {
     for (const e of elements) {
-      const wasActive = this.isActive(e.id);
+      const wasActive = this.isElementActive(e.id);
 
       if (this.elements.has(e.id)) {
-        this.removeElements([e.id]);
+        this.destroyElements([e.id]);
       }
 
       this.elements.set(e.id, e);
@@ -61,7 +61,7 @@ export class LiaProvider {
     this.notify();
   }
 
-  public removeElements(ids: Id[]): void {
+  public destroyElements(ids: Id[]): void {
     for (const id of ids) {
       const instance = this.instances.get(id);
 
@@ -78,7 +78,7 @@ export class LiaProvider {
     this.notify();
   }
 
-  public setMap(other: Nullable<LeafletMap>): void {
+  public attachMap(other: Nullable<LeafletMap>): void {
     this.map = other;
 
     if (other) {
@@ -94,7 +94,7 @@ export class LiaProvider {
     this.notify();
   }
 
-  public showElements(ids: Id[]): void {
+  public activateElements(ids: Id[]): void {
     for (const id of ids) {
       const instance = this.instances.get(id);
 
@@ -112,7 +112,7 @@ export class LiaProvider {
     this.notify();
   }
 
-  public hideElements(ids: Id[]): void {
+  public deactivateElements(ids: Id[]): void {
     for (const id of ids) {
       const instance = this.instances.get(id);
 
@@ -188,7 +188,7 @@ export class LiaProvider {
     this.notify();
   }
 
-  public fitBbox(id: Id, options?: LeafletFitBoundsOptions): void {
+  public fitToElement(id: Id, options?: LeafletFitBoundsOptions): void {
     const bbox = this.bboxes.get(id);
 
     if (bbox && this.map) {
@@ -200,7 +200,7 @@ export class LiaProvider {
     return this.elements;
   }
 
-  public has(id: Id): boolean {
+  public hasElement(id: Id): boolean {
     return this.elements.has(id);
   }
 
@@ -214,7 +214,7 @@ export class LiaProvider {
     return false;
   }
 
-  public isActive(id: Id): boolean {
+  public isElementActive(id: Id): boolean {
     return this.activeIds.has(id);
   }
 
@@ -228,7 +228,7 @@ export class LiaProvider {
 
       hasElement = true;
 
-      if (!this.isActive(e.id)) {
+      if (!this.isElementActive(e.id)) {
         return false;
       }
     }
@@ -236,7 +236,7 @@ export class LiaProvider {
     return hasElement;
   }
 
-  public isGroupIndeterminate(groupId: Id): boolean {
+  public isGroupPartiallyActive(groupId: Id): boolean {
     let activeCount = 0;
     let totalCount = 0;
 
@@ -247,7 +247,7 @@ export class LiaProvider {
 
       totalCount++;
 
-      if (this.isActive(e.id)) {
+      if (this.isElementActive(e.id)) {
         activeCount++;
       }
     }

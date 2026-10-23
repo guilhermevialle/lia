@@ -8,22 +8,22 @@ importers:
 
   .:
     dependencies:
-      '@geoman-io/leaflet-geoman-free':
-        specifier: ^2.20.4
-        version: 2.20.4(leaflet@1.9.4)
       geojson:
         specifier: ^0.5.0
         version: 0.5.0
-      leaflet:
-        specifier: ^1.9.4
-        version: 1.9.4
     devDependencies:
+      '@geoman-io/leaflet-geoman-free':
+        specifier: ^2.20.4
+        version: 2.20.4(leaflet@1.9.4)
       '@types/geojson':
         specifier: ^7946.0.16
         version: 7946.0.16
       '@types/leaflet':
         specifier: ^1.9.22
         version: 1.9.22
+      leaflet:
+        specifier: ^1.9.4
+        version: 1.9.4
       oxlint:
         specifier: ^1.89.0
         version: 1.89.0(oxlint-tsgolint@7.0.2005)

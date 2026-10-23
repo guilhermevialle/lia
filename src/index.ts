@@ -20,4 +20,10 @@ export class LiaProvider {
   private activeIds = new Set<ElementId>();
   private listeners = new Set<Listener>();
   private clickListeners = new Set<ClickListener>();
+
+  public constructor(target: Nullable<LeafletMap>) {
+    this.target = target;
+  }
+
+  public register(element: LiaElement) {}
 }

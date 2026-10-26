@@ -15,6 +15,7 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+.secrets
 
 # Test and coverage
 coverage/

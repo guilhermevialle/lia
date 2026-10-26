@@ -1,10 +1,28 @@
 # Lia
 
-A library that makes Leaflet layer management simple and reactive.
+Lia is a layer management library for Leaflet. It provides a single, predictable interface to register, group, toggle and observe map layers, with a subscription model designed to integrate with reactive UIs.
 
-> **Alpha:** this project is a work in progress. The API may change at any time.
+> **Status: Alpha.** Lia is under active development and its API may change between releases.
 
-## Usage
+## Overview
+
+Managing many GeoJSON layers directly through Leaflet leads to scattered state and repeated boilerplate. Lia centralizes that responsibility in one provider:
+
+- **Element registry** - GeoJSON layers are registered once and identified by id.
+- **Groups** - elements share a `groupId`, enabling group-level queries and toggling.
+- **Visibility control** - elements are activated, deactivated and toggled without manual layer bookkeeping.
+- **Map lifecycle** - the map can be attached, swapped or detached while active elements are preserved.
+- **Observability** - state changes and element clicks are exposed through subscriptions.
+
+## Installation
+
+```bash
+pnpm add @guivialle/lia
+```
+
+Peer dependencies (Leaflet, Leaflet-Geoman and the Leaflet type definitions) are installed automatically by modern package managers.
+
+## Quick start
 
 ```ts
 import { Map } from "leaflet";
@@ -26,44 +44,49 @@ lia.activateElements(["park"]);
 lia.fitToElement("park");
 ```
 
-## API
+## API reference
 
 ### Elements
 
-```ts
-lia.registerElements(elements, { active: true }); // add elements, optionally active
-lia.destroyElements(["park"]);                    // remove elements
-lia.activateElements(["park"]);                   // show on the map
-lia.deactivateElements(["park"]);                 // hide from the map
-lia.toggleElements(["park"]);                     // flip visibility
-lia.fitToElement("park");                         // fit the map to the element bounds
-```
+| Method | Description |
+| --- | --- |
+| `registerElements(elements, options?)` | Registers elements. Pass `{ active: true }` to display them immediately. |
+| `destroyElements(ids)` | Removes elements and their layers. |
+| `activateElements(ids)` | Displays elements on the map. |
+| `deactivateElements(ids)` | Hides elements from the map. |
+| `toggleElements(ids)` | Inverts the visibility of each element. |
+| `fitToElement(id, options?)` | Fits the map view to the element bounds. |
 
 ### Groups
 
-```ts
-lia.toggleGroup("places");               // activate or deactivate a whole group
-lia.isGroupActive("places");             // every element is active
-lia.isGroupPartiallyActive("places");    // some elements are active
-lia.hasGroup("places");
-```
+| Method | Description |
+| --- | --- |
+| `toggleGroup(groupId)` | Activates a group, or deactivates it when fully active. |
+| `hasGroup(groupId)` | Whether the group has registered elements. |
+| `isGroupActive(groupId)` | Whether every element in the group is active. |
+| `isGroupPartiallyActive(groupId)` | Whether only some elements in the group are active. |
 
 ### Queries
 
-```ts
-lia.getElements();           // Map<Id, LiaElement>
-lia.hasElement("park");
-lia.isElementActive("park");
-```
+| Method | Description |
+| --- | --- |
+| `getElements()` | Returns all registered elements as a `Map<Id, LiaElement>`. |
+| `hasElement(id)` | Whether the element is registered. |
+| `isElementActive(id)` | Whether the element is currently active. |
 
 ### Map
 
-```ts
-lia.attachMap(map); // attach (or swap) the map, active elements are re-added
-lia.detachMap();    // remove active elements from the map and unlink it
-```
+| Method | Description |
+| --- | --- |
+| `attachMap(map)` | Attaches or replaces the map. Active elements are added to it. |
+| `detachMap()` | Removes active elements from the map and unlinks it. |
 
 ### Events
+
+| Method | Description |
+| --- | --- |
+| `subscribe(callback)` | Invoked on every state change. Returns an unsubscribe function. |
+| `onElementClick(callback)` | Invoked with the element id when an element is clicked. Returns an unsubscribe function. |
 
 ```ts
 const unsubscribe = lia.subscribe(() => console.log("state changed"));

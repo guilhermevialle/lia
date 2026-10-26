@@ -94,6 +94,24 @@ export class LiaProvider {
     this.notify();
   }
 
+  public detachMap(): void {
+    const map = this.map;
+
+    if (map) {
+      this.activeIds.forEach((id) => {
+        const instance = this.instances.get(id);
+
+        if (instance && map.hasLayer(instance)) {
+          map.removeLayer(instance);
+        }
+      });
+    }
+
+    this.map = null;
+
+    this.notify();
+  }
+
   public activateElements(ids: Id[]): void {
     for (const id of ids) {
       const instance = this.instances.get(id);

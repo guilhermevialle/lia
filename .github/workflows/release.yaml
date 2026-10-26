@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - release
+    paths:
+      - src/**
+      - package.json
+      - pnpm-lock.yaml
+      - tsconfig.json
+      - tsconfig.build.json
+      - .releaserc.json
+      - README.md
   workflow_dispatch:
 
 jobs:

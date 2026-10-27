@@ -22,9 +22,23 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guilhermevialle/lia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/guilhermevialle/lia/issues"
+  },
+  "homepage": "https://github.com/guilhermevialle/lia#readme",
+  "keywords": [
+    "leaflet",
+    "react",
+    "geojson",
+    "layers",
+    "map"
+  ],
   "author": "Guilherme Vialle",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.20.4",

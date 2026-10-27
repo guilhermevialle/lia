@@ -20,7 +20,7 @@ Managing many GeoJSON layers directly through Leaflet leads to scattered state a
 pnpm add @guivialle/lia
 ```
 
-Peer dependencies (Leaflet, Leaflet-Geoman and the Leaflet type definitions) are installed automatically by modern package managers.
+Peer dependencies (React 18+, Leaflet, Leaflet-Geoman and the Leaflet type definitions) are installed automatically by modern package managers.
 
 ## Quick start
 
@@ -92,3 +92,40 @@ lia.fitToElement("park");
 const unsubscribe = lia.subscribe(() => console.log("state changed"));
 const stop = lia.onElementClick((id) => console.log("clicked", id));
 ```
+
+## React
+
+### `useLiaQuery(provider)`
+
+Reactive bridge between a `LiaProvider` instance and React, built on `useSyncExternalStore`. The component re-renders whenever the provider notifies a state change, so the returned queries always reflect the current state.
+
+| Query | Description |
+| --- | --- |
+| `isElementActive(id)` | Whether the element is currently active. |
+| `isGroupActive(groupId)` | Whether every element in the group is active. |
+| `isGroupPartiallyActive(groupId)` | Whether only some elements in the group are active. |
+
+```tsx
+import { useLiaQuery } from "@guivialle/lia";
+
+function GroupToggle({ lia, groupId }: { lia: LiaProvider; groupId: string }) {
+  const { isGroupActive, isGroupPartiallyActive } = useLiaQuery(lia);
+
+  return (
+    <input
+      type="checkbox"
+      checked={isGroupActive(groupId)}
+      ref={(el) => {
+        if (el) el.indeterminate = isGroupPartiallyActive(groupId);
+      }}
+      onChange={() => lia.toggleGroup(groupId)}
+    />
+  );
+}
+```
+
+Commands such as `registerElements` or `toggleGroup` are called directly on the provider; they notify subscribers, so no hook is needed to write.
+
+## License
+
+[MIT](LICENSE)

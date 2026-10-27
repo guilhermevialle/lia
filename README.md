@@ -1,6 +1,6 @@
 # Lia
 
-Lia is a layer management library for Leaflet. It provides a single, predictable interface to register, group, toggle and observe map layers, with a subscription model designed to integrate with reactive UIs.
+Lia manages GeoJSON layers on a Leaflet map and exposes their state to React. You register layers, group them and toggle them on the map, and your components re-render when that state changes.
 
 > **Status: Alpha.** Lia is under active development and its API may change between releases.
 
@@ -21,6 +21,14 @@ pnpm add @guivialle/lia
 ```
 
 Peer dependencies (React 18+, Leaflet, Leaflet-Geoman and the Leaflet type definitions) are installed automatically by modern package managers.
+
+## Why Lia
+
+- **Smart layer toggling** - elements are added to or removed from the map only when needed, and their active state is tracked for you.
+- **Built for many layers** - elements are indexed by id, and only active layers are added to the map.
+- **Group control** - activate or deactivate a whole group at once, and query whether it is fully or partially active.
+- **Any number of maps** - create one `LiaProvider` per map; each instance is independent.
+- **Reactive with React** - `useLiaQuery` re-renders your components when the layer state changes.
 
 ## Quick start
 
@@ -44,7 +52,7 @@ lia.activateElements(["park"]);
 lia.fitToElement("park");
 ```
 
-## API reference
+## Provider API
 
 ### Elements
 
@@ -93,7 +101,7 @@ const unsubscribe = lia.subscribe(() => console.log("state changed"));
 const stop = lia.onElementClick((id) => console.log("clicked", id));
 ```
 
-## React
+## Hooks API
 
 ### `useLiaQuery(provider)`
 

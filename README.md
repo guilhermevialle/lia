@@ -62,6 +62,8 @@ lia.fitToElement("park");
 | `destroyElements(ids)` | Removes elements and their layers. |
 | `activateElements(ids)` | Displays elements on the map. |
 | `deactivateElements(ids)` | Hides elements from the map. |
+| `activateAll()` | Displays every registered element on the map. |
+| `deactivateAll()` | Hides every registered element from the map. |
 | `toggleElements(ids)` | Inverts the visibility of each element. |
 | `fitToElement(id, options?)` | Fits the map view to the element bounds. |
 
@@ -81,6 +83,7 @@ lia.fitToElement("park");
 | `getElements()` | Returns all registered elements as a `Map<Id, LiaElement>`. |
 | `hasElement(id)` | Whether the element is registered. |
 | `isElementActive(id)` | Whether the element is currently active. |
+| `isAllActive()` | Whether every registered element is active. |
 
 ### Map
 
@@ -110,6 +113,7 @@ Reactive bridge between a `LiaProvider` instance and React, built on `useSyncExt
 | Query | Description |
 | --- | --- |
 | `isElementActive(id)` | Whether the element is currently active. |
+| `isAllActive()` | Whether every registered element is active. |
 | `isGroupActive(groupId)` | Whether every element in the group is active. |
 | `isGroupPartiallyActive(groupId)` | Whether only some elements in the group are active. |
 

@@ -20,6 +20,7 @@ export function useLiaQuery(provider: LiaProvider) {
   return useMemo(
     () => ({
       isElementActive: (id: Id) => provider.isElementActive(id),
+      isAllActive: () => provider.isAllActive(),
       isGroupActive: (groupId: Id) => provider.isGroupActive(groupId),
       isGroupPartiallyActive: (groupId: Id) =>
         provider.isGroupPartiallyActive(groupId),

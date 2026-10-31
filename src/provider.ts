@@ -148,6 +148,14 @@ export class LiaProvider {
     this.notify();
   }
 
+  public activateAll(): void {
+    this.activateElements([...this.instances.keys()]);
+  }
+
+  public deactivateAll(): void {
+    this.deactivateElements([...this.instances.keys()]);
+  }
+
   public toggleElements(ids: Id[]): void {
     for (const id of ids) {
       const instance = this.instances.get(id);
@@ -234,6 +242,10 @@ export class LiaProvider {
 
   public isElementActive(id: Id): boolean {
     return this.activeIds.has(id);
+  }
+
+  public isAllActive(): boolean {
+    return this.elements.size > 0 && this.activeIds.size === this.elements.size;
   }
 
   public isGroupActive(groupId: Id): boolean {
